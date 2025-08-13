@@ -423,3 +423,30 @@ veg_barplot <- ggplot(summary_tab_percent, aes(x = Vegetation, y = Percentage, f
     panel.grid.minor = element_blank()
   )
 ggsave("avg_veg_barplot_percentage.pdf", plot = veg_barplot, width = 6, height = 5)
+
+
+
+####CAZymes in viruses
+
+v <- read.csv("combined_viral_cazymes.csv", header= TRUE, sep= ",")
+cazyme_summary <- v  %>%
+  group_by(Most_Represented_CAZyme) %>%
+  summarise(Count = n()) %>% 
+  mutate(Percentage = (Count / sum(Count)) * 100) %>%
+  arrange(desc(Count))
+vb <- ggplot(cazyme_summary, aes(x = reorder(Most_Represented_CAZyme, -Percentage), y = Percentage)) +
+  geom_bar(stat = "identity", fill = "#66C2A5") +
+  labs(title = "CAZyme Families Found in Viruses",
+       x = "CAZyme Family",
+       y = "Percentage (%)") +
+  theme_minimal(base_size = 14) +
+ theme(
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 11, face = "bold"),
+    axis.title.y = element_text(size = 11, face = "bold"),
+    axis.text.x = element_text(size = 11, face = "bold", angle = 45, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 11, face = "bold"),
+    legend.title = element_text(size = 11, face = "bold"),
+    legend.text = element_text(size = 11, face = "bold"))
+
+ggsave("Viral_CAZymes.pdf", plot = vb, width = 10, height = 5, units = "in", dpi = 300)
