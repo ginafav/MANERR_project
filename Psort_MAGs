@@ -1,0 +1,50 @@
+library(tidyverse)
+library(ggplot2)
+pdat <- read.csv("/Users/gla589/Documents/Research/R_analysis_07_04/psort2_a.csv", header = TRUE, sep = ",")
+head(pdat)
+# Summarize counts by Phylum and Localization
+plot_data <- pdat %>%
+  group_by(Phylum, Localization) %>%
+  summarise(Count = n()) %>%
+  ungroup()
+
+#To normalize I did the following:
+
+plot_data <- pdat %>%
+  group_by(Phylum, Localization) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Phylum) %>%
+  mutate(Percentage = Count / sum(Count) * 100) %>%
+  ungroup()
+ 
+all_loc <- unique(plot_data$Localization)
+custom_colors <- c("Extracellular" = "#cffaf0", "Cytoplasmic" =  "#91c4c4",
+                  "Cellwall" = "#8DA0CB", "CytoplasmicMembrane" = "#edceed", "Unknown" = "#ebdad8", "Periplasmic" = "#069494", "OuterMembrane" = "#fbceb1")
+  
+  
+pplot <- ggplot(plot_data, aes(x = Phylum, y = Percentage, fill = Localization)) +
+    geom_bar(stat = "identity", position = "stack", color= "black", width = 0.7) +
+   # geom_text(aes(label = paste0(round(Percentage, 1), "%")),
+              #position = position_stack(vjust = 0.5),
+           #   size = 3, color = "black", fontface = "bold") +
+    scale_fill_manual(values = custom_colors) +
+    labs(title = "Cazymes Localization",
+         x = "Taxonomy",
+         y = "Percentage (%)",
+         fill = "Localization") +
+    #theme_minimal(base_size = 14) +
+    theme(
+      # axis.text.x = element_text(angle = 90, hjust = 1),
+      plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+      axis.title.x = element_text(size = 11, face = "bold"),
+      axis.title.y = element_text(size = 11, face = "bold"),
+      axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
+      axis.text.y = element_text(size = 11),
+      legend.title = element_text(size = 11, face = "bold"),
+      legend.text = element_text(size = 11))
+
+ggsave("psort_barplot.pdf", plot = pplot, width = 10, height = 5, dpi = 300)
+
+pdf("psort_barplot.pdf", width = 10, height = 5)
+plot(pplot)
+dev.set(dev.next())
