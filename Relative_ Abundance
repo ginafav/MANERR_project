@@ -1,0 +1,84 @@
+library(ggplot2)
+library("dendextend")
+library("vegan")
+library(tidyverse)
+library(pheatmap)
+set.seed(06131993)
+####Relative abundance of all 491 MAGs 
+# Read the data
+rel <- read.csv("Manerr_Table_Info/MAG-vs-Reads.csv", header=TRUE, sep = ",")
+
+# Check the structure
+head(rel)
+
+# Group by Phylum and sum abundances across samples
+rel_summarised <- rel %>%
+  group_by(Phylum) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+
+# Set row names as Phylum and remove the column
+rel_summarised <- as.data.frame(rel_summarised)
+rownames(rel_summarised) <- rel_summarised$Phylum
+#rel_mat <- rel_summarised[, -1]
+
+rel_mat <- rel_summarised[, -which(names(rel_summarised) == "Phylum")]
+rel_mat <- as.matrix(rel_mat)
+# Bray-Curtis distance and clustering for rows (Phylum)
+distance_rows <- vegdist(rel_mat, method = "bray")
+clust_rows <- hclust(distance_rows, method = "ward.D2")
+
+# Bray-Curtis distance and clustering for columns (Samples)
+distance_cols <- vegdist(t(rel_mat), method = "bray")
+clust_cols <- hclust(distance_cols, method = "ward.D2")
+pdf("mag_rel_abund.pdf", width = 11 , height = 8)
+# Heatmap with both row and column clustering
+pheatmap(rel_mat,
+         cluster_rows = clust_rows,
+         color = colorRampPalette(c("#3E4087", "white", "red"))(50),
+         border_color = NA,
+         show_rownames = TRUE,
+         fontsize_row = 11,
+         main = "Relative Abundanceof Microbes in MI Sediment Samples")
+#print((rownames(rel_mat)))
+#pheatmap(rel_mat,
+      #   color = hcl.colors(50, "Viridis"))
+dev.set(dev.next())
+
+
+#### Relative Abundance of 1097 vMAGs obtained from metagenomic assemblies
+relv <- read.csv("VMAG-vs_Read.csv", header=TRUE, sep = ",")
+# Check the structure
+head(relv)
+
+# Group by Phylum and sum abundances across samples
+relv_summarised <- relv %>%
+  group_by(Class) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))
+
+# Set row names as Phylum and remove the column
+relv_summarised <- as.data.frame(relv_summarised)
+rownames(relv_summarised) <- relv_summarised$Class
+#rel_mat <- rel_summarised[, -1]
+
+relv_mat <- relv_summarised[, -which(names(relv_summarised) == "Class")]
+relv_mat <- as.matrix(relv_mat)
+# Bray-Curtis distance and clustering for rows (Phylum)
+distancev_rows <- vegdist(relv_mat, method = "bray")
+clustv_rows <- hclust(distancev_rows, method = "ward.D2")
+
+# Bray-Curtis distance and clustering for columns (Samples)
+distancev_cols <- vegdist(t(relv_mat), method = "bray")
+clustv_cols <- hclust(distancev_cols, method = "ward.D2")
+pdf("vmag_rel_abund.pdf", width = 11 , height = 8)
+# Heatmap with both row and column clustering
+pheatmap(relv_mat,
+         cluster_rows = clustv_rows,
+         color = colorRampPalette(c("#3E4087", "white", "red"))(50),
+         border_color = NA,
+         show_rownames = TRUE,
+         fontsize_row = 11,
+         main = "Relative Abundance of Virus in MI Sediment Samples")
+#print((rownames(rel_mat)))
+#pheatmap(rel_mat,
+      #   color = hcl.colors(50, "Viridis"))
+dev.set(dev.next())
