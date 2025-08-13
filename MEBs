@@ -1,0 +1,73 @@
+# Load required package
+library(pheatmap)
+library(viridis)
+#install.packages("viridis")
+# Read the data
+meb_data <- read.table("user_data.tsv_pfam_completenes.tab", header = TRUE, sep = "\t")
+
+# Remove the first column (genome names), keep for annotation later
+rownames(meb_data) <- meb_data[, 1]
+meb_data_numeric <- meb_data[, -1]
+
+# Remove columns that are all zeros
+meb_data_filtered <- meb_data_numeric[, colSums(meb_data_numeric) != 0]
+
+# Remove dots from pathway names and replace with space
+cleaned_colnames <- gsub("\\.", " ", colnames(meb_data_filtered))
+colnames(meb_data_filtered) <- cleaned_colnames
+
+# Remove last 5 columns and remove some specific columns by their indices
+meb_data_filtered <- meb_data_filtered[, 1:(ncol(meb_data_filtered) - 7)]
+colnames(meb_data_filtered)
+meb_data_filtered<- meb_data_filtered[, -c(1, 2, 25, 27, 28, 29, 30, 31, 32, 35, 36, 37, 38, 39, 40, 41, 54, 55, 56)]
+
+#Annotate Pathways by Biogeochemical Cycle
+cycle_vector <- c(
+  # S cycle
+  "DsrABC Marker_gene " = "S", "Sulfur_oxidation Sox_system " = "S", "Sulfur_oxidation Sor_system " = "S",
+  "Sulfur_oxidation FccB " = "S", "Sulfur_oxidation DoxAD " = "S", "Sulfur_oxidation DsrEFH " = "S",
+  "DsrKMJOP Marker_gene " = "S", "Sulfur_reduction QmoABC " = "S", "Sulfur_oxidation Puf_reaction_center " = "S",
+  "Sulfur_assimilation CysACDJNPQU " = "S", "Tetrathionate_reduction asrABC " = "S", "Tetrathionate_reduction ttrABC " = "S",
+  "Thiosulfate_disproportionation phsABC " = "S", "Thiosulfate_disproportionation Rhodanase " = "S",
+  "S _reduction hydACD " = "S", "S _reduction sreABC " = "S", "DMS_degradation DdhABC " = "S",
+  "DMS_degradation DsoABCDEF " = "S", "DMS_degradation DmoAB " = "S", "Sulfoacetaldehyde_degradation isfD " = "S",
+  "Sulfoacetaldehyde_degradation Xsc " = "S", "Sulfoacetaldehyde_degradation SafD " = "S", "Sulfolactate_degradation" = "S",
+  # Fe cycle
+  "Fe II oxidation" = "Fe", "Fe_reduction_absorption" = "Fe",
+  # N cycle
+  "Nitrifier_denitrification" = "N", "Nitrate_reduction_I denitrification " = "N",
+  "Nitrate_reduction_III denitrification " = "N", "Nitrate_reductionIV dissimilatory " = "N",
+  "Nitrate_reductionV assimilatory " = "N", "Nitrate_reductionVI assimilatory " = "N",
+  "Nitrate_reductionVIII dissimilatory " = "N", "Nitrate_reductionVIIIb dissimilatory " = "N",
+  "Nitrate_reductionIX dissimilatory " = "N", "Nitrate_reductionX dissimilatoryperiplasmic " = "N",
+  "Nitrogen_fixationI ferredoxin " = "N", "Nitrogen_fixation_II_ flavodoxin " = "N"
+)
+
+# Define annotation for columns (pathways)
+annotation_col <- data.frame(
+  Cycle = cycle_vector[colnames(meb_data_filtered)]
+)
+rownames(annotation_col) <- colnames(meb_data_filtered)
+
+# Define colors
+annotation_colors <- list(Cycle = c("S" = "purple", "N" = "pink", "Fe" = "#DE3163"))
+my_colors <- viridisLite::viridis(100)
+
+# Heatmap, genome names hidden
+pheatmap(
+  meb_data_filtered,
+  annotation_col = annotation_col,
+  annotation_colors = annotation_colors,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  color = my_colors,
+  show_rownames = FALSE,    # <--- Hide genome names
+  #show_colnames = FALSE,     # Show pathway names
+  fontsize_row = 11,
+  fontsize_col = 10,
+  border_color = "black",
+  angle_col = 90,
+ filename = "mebs_comp_pathway_with_pathway_names.pdf",
+  width = 10,
+  height = 9
+)
