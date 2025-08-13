@@ -1,0 +1,12 @@
+dat <- read.csv("MAGs-vs-Samples-Vegetation.csv", header=TRUE, sep = ",")
+
+#make community matrix - extract columns with abundance information
+com = dat[,4:ncol(dat)]
+
+#turn abundance data frame into a matrix
+m_com = as.matrix(com)
+
+set.seed(06131993)
+nmds = metaMDS(m_com, distance = "bray")
+nmds
+plot(nmds)
