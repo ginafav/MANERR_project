@@ -1,0 +1,425 @@
+####Lets start by making the piechart to count the number of virus
+library(ggplot2)
+library(gridExtra)
+
+# Create a data frame
+bin_summary <- data.frame(
+  Category = c("Refined Bins", "Redundant Bins", "Bins >10 Scaffolds"),
+  Count = c(1451 - 326 - 28, 326, 28)
+)
+pdf("piechart_bins.pdf", width = 5 , height = 5)
+
+# Plot
+ggplot(bin_summary, aes(x = "", y = Count, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  coord_polar(theta = "y") +
+  #labs(title = "Bin Composition Overview") +
+  theme_minimal() +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  scale_fill_manual(values = c(
+    "Bins >10 Scaffolds" = "#F49595",      # red
+    "Refined Bins" = "#EECEDA",       # custom green
+    "Redundant Bins" = "#BDD2E4"           # blue
+  )) +
+  theme_void() #+
+  labs(fill = "Category")
+
+dev.off()
+
+
+####################
+
+# 1. Lets start by analyzing the life cyle of the of unbinned viruses (uViGs)
+
+set.seed(06131993)
+c <- read.csv("checkv_lifestyle.csv", header = TRUE, sep = ",")
+head(c)
+pdf("UViGs_Lifecycle.pdf", width = 5 , height = 5)
+c1 <- ggplot(data = c)
+c1 <- c1 + geom_jitter(aes(x = life_cycle, y = contig_length, fill = life_cycle), shape = 21, show.legend = FALSE, color = "black",
+                       width = 0.35,
+                      size = 2) + theme_classic() +
+                        stat_summary(aes(x = life_cycle, y = contig_length), 
+                        fun = median, geom = "crossbar", color = "black", 
+                        width = 0.7) + 
+  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
+  labs(title = "Life Cycle of Unclultivated Viral Genomes", x = "Life Cycle", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
+    axis.title.x = element_text(size = 11),
+    axis.title.y = element_text(size = 11))
+c1
+
+dev.off()
+
+## 2. Next, lets analyze the life cycle of the vMAGs 
+set.seed(06131993)
+v <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
+head(v)
+pdf("VMAGs_Lifecycle.pdf", width = 5 , height = 5)
+v1 <- ggplot(data = v)
+v1 <- v1 + geom_jitter(aes(x = life_cycle, y = contig_length, fill = life_cycle), shape = 21, show.legend = FALSE, color = "black",
+                       width = 0.35,
+                      size = 2) + theme_classic() +
+                        stat_summary(aes(x = life_cycle, y = contig_length), 
+                        fun = median, geom = "crossbar", color = "black", 
+                        width = 0.7) + 
+  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
+  labs(title = "Life Cycle of VMAGs", x = "Life Cycle", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x = element_text(size = 11),
+    axis.text.y = element_text(size = 11),
+    axis.title.x = element_text(size = 11),
+    axis.title.y = element_text(size = 11))
+v1
+
+dev.off()
+
+
+## 3. Lets analyze the contig length and quality of the data. 
+## This check the quality of VMAGs
+set.seed(06131993)
+q <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
+head(q)
+pdf("VMAGs_Quality.pdf", width = 5 , height = 5)
+q1 <- ggplot(data = q)
+q1 <- q1 + geom_jitter(aes(x = checkv_quality, y = contig_length, fill = checkv_quality), shape = 21, show.legend = FALSE, color = "black",
+                       width = 0.35,
+                      size = 2) + theme_classic() +
+                        stat_summary(aes(x = checkv_quality, y =           contig_length), 
+                        fun = median, geom = "crossbar", color = "black", 
+                        width = 0.7) + 
+  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
+  labs(title = "Quality of VMAGs", x = "Quality", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
+    axis.text.y = element_text(size = 11),
+    axis.title.x = element_text(size = 11),
+    axis.title.y = element_text(size = 11))
+q1
+
+dev.off()
+
+# 4. Lastly, we repeat this for the UVIGs
+set.seed(06131993)
+u <- read.csv("checkv_lifestyle.csv", header = TRUE, sep = ",")
+head(u)
+pdf("UViGs_Quality.pdf", width = 5 , height = 5)
+u1 <- ggplot(data = u)
+u1 <- u1 + geom_jitter(aes(x = checkv_quality, y = contig_length, fill = checkv_quality), shape = 21, show.legend = FALSE, color = "black",
+                       width = 0.35,
+                      size = 2) + theme_classic() +
+                        stat_summary(aes(x = checkv_quality, y =           contig_length), 
+                        fun = median, geom = "crossbar", color = "black", 
+                        width = 0.7) + 
+  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB")) +
+  labs(title = "Quality of UViGs", x = "Quality", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
+    axis.text.y = element_text(size = 11),
+    axis.title.x = element_text(size = 11),
+    axis.title.y = element_text(size = 11))
+u1
+
+dev.off()
+
+#### Analyzing the viral MAGs taxonomy
+library(dplyr)
+set.seed(06131993)
+vt <- read.csv("vmag_taxonomy.csv", header = TRUE, sep = ",")
+head(vt)
+##Grouping all figures in one file
+library(gridExtra)
+g <- arrangeGrob(q1, v1, u1, c1, ncol = 2)
+ggsave("All_quality_lifecycle.pdf", height = 12, width = 12, g)
+#grid.arrange(q1, v1, u1, c1, ncol =2)
+
+#Summarize and count the taxa data
+taxonomy_summary <- vt %>%
+  group_by(taxonomy) %>%
+  summarise(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# Define your custom colors
+custom_colors <- c(
+  "Autographiviridae" = "#CAE6E6", 
+  "Caudoviricetes" =  "#EECEDA",
+  "Crassvirales" = "#8DA0CB", 
+  "Drexlerviridae" = "#FF7518",
+  "Herelleviridae" = "#AA98A9", 
+  "Kyanoviridae" = "#d28a8c", 
+  "Lavidaviridae" = "#fbceb1", 
+  "Lipothrixviridae" = "#879b86", 
+  "Megaviricetes" = "#fec868", 
+  "Mimiviridae" = "#069494", 
+  "Phycodnaviridae" = "#E4D96F", 
+  "Schitoviridae" = "#E0AFFF", 
+  "Straboviridae" = "cyan", 
+  "Tectiviridae" = "violet", 
+  "Unclassified" = "black", 
+  "Zobellviridae" = "#FDECEF"
+)
+pdf("vmag_taxonomy.pdf", width = 5 , height = 5)
+
+# Create a Pie chart
+ggplot(taxonomy_summary, aes(x = "", y = count, fill = taxonomy)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  scale_fill_manual(values = custom_colors) +
+  theme_void() +
+  theme(legend.position = "right") +
+  labs(title = "Taxonomic Composition of Viral Bins")
+
+dev.off()
+
+#Piechart for UViGs taxonomy
+t <- read.csv("uvig_taxonomy.csv", header = TRUE, sep = ",")
+head(t)
+t_summary <- t %>%
+  group_by(taxonomy) %>%
+  summarise(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# Define your custom colors
+custom_colors <- c(
+  "Ackermannviridae" = "#CAE6E6", 
+  "Autographiviridae" = "#8DA0CB", 
+  "Bamfordvirae" = "#fbceb1", 
+  "Caudoviricetes" =  "#EECEDA",
+  "Crassvirales" = "#879b86",
+  "Demerecviridae" = "#FF7518",
+  "Herelleviridae" = "#AA98A9", 
+  "Kyanoviridae" = "#d28a8c", 
+  "Megaviricetes" = "#fec868", 
+  "Mimiviridae" = "#069494", 
+  "Phycodnaviridae" = "#E4D96F", 
+  "Schitoviridae" = "#E0AFFF", 
+  "Straboviridae" = "cyan", 
+  "Unclassified" = "black", 
+  "Vilmaviridae" = "violet"
+)
+
+pdf("uvig_taxonomy.pdf", width = 5 , height = 5)
+ggplot(t_summary, aes(x = "", y = count, fill = taxonomy)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  scale_fill_manual(values = custom_colors) +
+  theme_void() +
+  theme(legend.position = "right") +
+  labs(title = "Taxonomic Composition of UViGs")
+#dev.off()
+dev.set(dev.next())
+
+
+#####Creating Sankey Chart for Host prediction
+#Install packages if needed
+#install.packages("highcharter")
+library(highcharter)
+library(dplyr)
+set.seed(06131993)
+#Read csv file
+h <-read.csv("host_prediction_06_07_25.csv", header = TRUE, sep = ",")
+head(h)
+#Change the name of the colnames with N/A 
+h$Virus.taxonomy[h$Virus.taxonomy == "#N/A"]<- "Unclassified virus"
+h$Phage.cycle[h$Phage.cycle == "lysogenic"]<- "Lysogenic"
+h$Phage.cycle[h$Phage.cycle == "lytic"]<- "Lyc"
+#hchart(data_to_sankey(h), "sankey", name= "sankey")
+
+h <- h %>%
+  dplyr::select(Virus.taxonomy, Phage.cycle, Phylum, Domain) #hcrt_sandsignika
+
+sankey_plot<- hchart(data_to_sankey(h), "sankey", name= "sankey") %>%
+hc_add_theme(hc_theme_hcrt()) %>% 
+hc_plotOptions(sankey = list(nodeWidth = 50, 
+dataLabels = list(style = list(fontSize = "12px", fontFamily = "Arial")))) 
+
+sankey_plot
+htmlwidgets::saveWidget(sankey_plot, "sankey_plot.html")
+webshot::webshot("sankey_plot.html", "sankey_plot.pdf")
+#pdf("sankey.pdf", width = 5 , height = 5)
+#plot(sankey)
+#dev.off()
+#hchart(data_to_sankey(h), "sankey", name= "sankey") %>%
+#hc_add_theme(hc_theme_smpl())
+
+
+
+#Lets make the piechart for host infected and those not.
+pi <- data.frame(
+  Category = c("HP", "NHP"),
+  Count = c(162, 329)
+)
+pdf("piechart_hp_nhp.pdf", width = 5 , height = 5)
+
+# Plot
+ggplot(pi, aes(x = "", y = Count, fill = Category)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  #labs(title = "Bin Composition Overview") +
+  theme_minimal() +
+  theme(axis.text = element_blank(), legend.position = "right",
+        axis.ticks = element_blank()) +
+  scale_fill_manual(values = c(
+    "HP" = "#8fb3e2",     
+    "NHP" = "#BDD2E4"           
+  )) +
+  theme_void() #+
+  labs(fill = "Category")
+
+dev.off()
+
+
+
+####Viral AVGs analysis
+
+library(circlize)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+set.seed(06131993)
+#Read csv file
+amg <-read.csv("checkamg_output.csv", header = TRUE, sep = ",")
+head(amg)
+amg$KEGG_ID_categories[amg$KEGG_ID_categories == "No hits"] <- "No_KEGG hits"
+category_counts <- amg %>%
+  group_by(KEGG_ID_categories) %>%
+  summarise(Count = n_distinct(Protein)) %>%
+  arrange(Count)
+
+
+avg <- ggplot(category_counts, aes(x = Count, y = reorder(KEGG_ID_categories, Count))) +
+  geom_bar(stat = 'identity', fill = '#66C2A5') +
+  labs(
+    title = 'Number of AVG per KEGG Category',
+    x = 'AVG Count',
+    y = 'KEGG Metabolic Category'
+  ) +
+  theme_minimal()
+ggsave("avg_barplot.pdf", plot = avg, width = 8, height = 6)
+
+#Percentage values of avg barplot
+# Summarize protein counts per KEGG category
+category_counts <- amg %>%
+  group_by(KEGG_ID_categories) %>%
+  summarise(Count = n_distinct(Protein)) %>%
+  ungroup()
+
+# Add percentage column
+category_counts_percent <- category_counts %>%
+  mutate(Percentage = 100 * Count / sum(Count)) %>%
+  arrange(Percentage)
+
+# Plot percentage values instead of raw counts
+avg <- ggplot(category_counts_percent, aes(x = Percentage, y = reorder(KEGG_ID_categories, Percentage))) +
+  geom_bar(stat = 'identity', fill = '#66C2A5') +
+  labs(
+    title = 'Percentage of AVGs per KEGG Category',
+    x = 'AVG Percentage (%)',
+    y = 'KEGG Metabolic Category'
+  ) +
+  theme_minimal(base_size = 13)
+
+ggsave("avg_barplot_percentage.pdf", plot = avg, width = 8, height = 6)
+
+# Count each predicted host (including NHP)
+host_counts <- amg %>%
+  group_by(Predicted.Host) %>%
+  summarise(Count = n())
+
+# To calculate percentage and label for pie chart
+host_counts <- host_counts %>%
+  mutate(Percent = round(Count / sum(Count) * 100, 1),
+         Label = paste0(Predicted.Host, " (", Percent, "%)"))
+
+piech <- ggplot(host_counts, aes(x = "", y = Count, fill = Predicted.Host)) +
+  geom_bar(width = 0.5, stat = "identity") +
+  coord_polar(theta = "y") +
+  theme_minimal() +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  scale_fill_manual(values = c(
+    "NHP" = "#c3d4cb",     
+    "p__Acidobacteriota" = "brown",      
+    "p__Bacteroidota" = "#92f52f",
+    "p__Chloroflexota" = "#069494",
+    "p__Desulfobacterota" = "#9d87e8",
+    "p__Methanobacteriota_B" = "cyan",
+    "p__Myxococcota" = "#FF7518",
+    "p__Pseudomonadota" = "#6D8196",
+    "p__Thermoproteota" = "#f52fc7"
+  )) +
+  theme_void() +
+  labs(title = "Predicted Host of Viral AMGs", fill = "Predicted Host") 
+
+ggsave("avg_pie.pdf", plot = piech, width = 6, height = 5)
+
+
+############Barplot
+# Include Vegetation column and Summarize counts per sample/contig and KEGG category
+amg <-read.csv("checkamg_output.csv", header = TRUE, sep = ",")
+amg$Vegetation <- sapply(amg$Contig, function(x) {
+  # Match a 'D' followed by 4 digits, then a single letter (M, S, U, W)
+  match <- regexec("D\\d{4}([MSUW])", x)
+  res <- regmatches(x, match)[[1]]
+  if (length(res) == 2) {
+    switch(res[2],
+           "M" = "Mangrove",
+           "S" = "Sporobolus",
+           "U" = "Seagrass",
+           "W" = "Water",
+           "Unknown")
+  } else {
+    "Unknown"
+  }
+})
+
+
+#Create the barplot
+veg_barplot <- ggplot(summary_tab, aes(x = Vegetation, y = Count, fill = Protein.Classification)) +
+  geom_bar(stat = "identity") +
+  labs(title = "AVG Classification in Sediments based on Vegetation Type",
+       x = "Vegetation Type", y = "AVG Protein Count", fill = "AVG Class") +
+  theme_minimal(base_size = 11) +
+  scale_fill_manual(values = color_vec) +
+  theme(
+    axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 11),
+    axis.title = element_text(size = 11, face = "bold"),
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    legend.position = "right",
+    legend.title = element_text(size = 11, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave("avg_veg_barplot.pdf", plot = veg_barplot, width = 6, height = 5)
+
+#Percentage value for barplot
+summary_tab_percent <- amg %>%
+  group_by(Vegetation, Protein.Classification) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Vegetation) %>%
+  mutate(Percentage = 100 * Count / sum(Count)) %>%
+  ungroup()
+veg_barplot <- ggplot(summary_tab_percent, aes(x = Vegetation, y = Percentage, fill = Protein.Classification)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Percentage of AVG Classes in Sediments by Vegetation",
+       x = "Vegetation Type", y = "AVG Class Percentage (%)", fill = "AVG Class") +
+  theme_minimal(base_size = 11) +
+  scale_fill_manual(values = color_vec) +
+  theme(
+    axis.text.x = element_text(size = 11, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 11),
+    axis.title = element_text(size = 11, face = "bold"),
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    legend.position = "right",
+    legend.title = element_text(size = 11, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+ggsave("avg_veg_barplot_percentage.pdf", plot = veg_barplot, width = 6, height = 5)
