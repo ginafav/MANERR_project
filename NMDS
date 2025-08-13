@@ -6,7 +6,94 @@ com = dat[,4:ncol(dat)]
 #turn abundance data frame into a matrix
 m_com = as.matrix(com)
 
+#Run nmds analysis using bray-curtis
 set.seed(06131993)
 nmds = metaMDS(m_com, distance = "bray")
 nmds
+#plot the result
 plot(nmds)
+
+#extract NMDS scores (x and y coordinates) for sites
+data.scores = as.data.frame(scores(nmds)$sites)
+
+#add columns to data frame 
+data.scores$Samples = dat$Samples
+data.scores$Vegetation = dat$Vegetation
+data.scores$Depth = dat$Depth
+
+head(data.scores)
+
+# create a new factor variable (DepthName) with explicit level labeling for clarity
+data.scores$DepthName <- factor(data.scores$Depth,
+                                levels = c(0, 2, 12, 20, 40, 48, 56, 58),
+                                labels = c("0", "02", "12", "20", "40", "48", "56", "58"))
+
+# This plot visualizes samples by NMDS dimensions (axes) with point colors for depth
+nmds_plot3 = ggplot(data.scores, aes(x = NMDS1, y = NMDS2, shape = DepthName, colour = DepthName)) + 
+  geom_point(size = 5) +
+  theme(
+    axis.text.y = element_text(colour = "black", size = 11),
+    axis.text.x = element_text(colour = "black", size = 11),
+    legend.text = element_text(colour = "black", size = 11, face = "bold"),
+    legend.position = "right", 
+    axis.title.y = element_text(colour = "black", size = 11, face = "bold"),
+    axis.title.x = element_text(colour = "black", size = 11, face = "bold"),
+    legend.title = element_text(colour = "black", size = 11, face = "bold"),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, size = 1.2),
+    legend.key = element_blank()
+  ) +
+  labs(x = "NMDS1", y = "NMDS2", colour = "DepthName", shape = "DepthName") +
+  scale_color_manual(values = c("pink", "#009E73", "#E69F00", "slateblue", "darkred", "coral", "darkblue",  "magenta")) +
+  scale_shape_manual(values = c(15, 16, 17, 18, 0, 1, 2, 3)) # DepthName categories
+
+nmds_plot3
+ggsave("nmds_depth.pdf", plot = nmds_plot3, width = 10, height = 7)
+
+
+
+###Plotting by vegetation type here ###
+data.scores$Vegetation <- as.factor(data.scores$Vegetation)
+nmds_plot2 = ggplot(data.scores, aes(x= NMDS1, y = NMDS2)) + 
+  geom_point(size = 4, aes(colour = Vegetation)) +
+  stat_ellipse(data = subset(data.scores, Vegetation != "Water"),
+    aes(group = Vegetation, fill = Vegetation), geom = "polygon", alpha = 0.1, show.legend = FALSE) +
+  theme(axis.text.y = element_text(colour = "black", size = 11),
+        axis.text.x = element_text(colour = "black", size = 11),
+        legend.text = element_text(colour = "black", size = 11, face = "bold"),
+        legend.position = "right", 
+        axis.title.y = element_text(colour = "black", size = 11, face = "bold"),
+        axis.title.x = element_text(colour = "black", size = 11, face = "bold"),
+        legend.title = element_text(colour = "black", size = 11, face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(color = "black", fill = NA, size = 1),
+        legend.key = element_blank()) +
+  labs(x = "NMDS1", colour = "Vegetation", y = "NMDS2") +
+    scale_color_manual(values = c ("#009E73", "coral", "slateblue",  "darkred")) +
+    scale_fill_manual(
+    values = c("Mangrove" = "#009E73", "Seagrass" = "coral", "Sporobolus" = "slateblue") 
+) 
+nmds_plot2
+ggsave("nmds_vegetation.pdf", plot = nmds_plot2, width = 10, height = 7)
+
+
+###Lets do an anlaysis to determine if vegetation and depth matters###
+
+#To determine if depth is an important factor for microbial presence and abundance:
+#Convert to factor
+library(vegan)
+dat$Depth <- as.factor(dat$Depth)
+table(dat$Depth)
+
+#Perform Permanova
+set.seed(06131993)
+permanova_result1 <- adonis2(m_com ~ Depth, data = dat, method = "bray")
+
+#To determine if Vegetation is an important factor for microbial presence and abundance:
+#Covert to factor
+dat$Vegetation <- as.factor(dat$Vegetation)
+table(dat$Vegetation)
+
+#Perform Permanova
+set.seed(06131993)
+permanova_result2 <- adonis2(m_com ~ Vegetation, data = dat, method = "bray")
