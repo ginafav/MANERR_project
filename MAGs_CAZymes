@@ -1,0 +1,36 @@
+df <- read.csv("cazymes_full_merged.csv", header = TRUE, sep = ",")
+cazyme_count <- df %>%
+  group_by(Bin, Taxonomy, Most_Represented_CAZyme) %>%
+  summarise(Count = n(), .groups = "drop")
+
+no_MAGs_per_phylum <- cazyme_count %>%
+  group_by(Taxonomy) %>%
+  summarise(Num_MAGs = n_distinct(Bin))
+no_MAGs_per_phylum <- no_MAGs_per_phylum %>%
+  mutate(Phylum_label = paste0(Taxonomy, " (", Num_MAGs, ")"))
+
+dat_normalize <- cazyme_count %>%
+  left_join(no_MAGs_per_phylum, by = "Taxonomy") %>%
+  mutate(Normalized_Abund = Count / Num_MAGs
+        )    
+
+#df("CAZymes_07_10.pdf", width = 15, height = 10)
+ d <- ggplot(dat_normalize, aes(x = Most_Represented_CAZyme, y = Phylum_label)) +
+  geom_point(aes(size = Normalized_Abund, color = Normalized_Abund), alpha = 0.9)   +
+   scale_color_viridis_c(option = "B") +
+   scale_size(range = c(3, 35)) +
+   theme_minimal(base_size = 12) +
+   theme(legend.key=element_blank(),
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 30, face = "bold"),
+    axis.title.y = element_text(size = 30, face = "bold"),
+    axis.text.x = element_text(size = 17, angle = 90, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 30),
+    legend.title = element_text(size = 20, face = "bold"),
+    legend.text = element_text(size = 20), 
+    panel.background = element_blank(), panel.border = element_rect(colour = "black", fill = NA, size = 1.2), 
+    legend.position = "right") + 
+  labs( x= "CAZymes", y = "No of Bins in each Phyla", size = "Average Relative Abundance", fill = "", color = "Relative Abundance") 
+   
+         
+ggsave("CAZymes2.pdf", plot = d, width = 45, height = 28, units = "in", dpi = 600)
