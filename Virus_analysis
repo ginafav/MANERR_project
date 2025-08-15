@@ -231,7 +231,7 @@ h$Phage.cycle[h$Phage.cycle == "lytic"]<- "Lyc"
 #hchart(data_to_sankey(h), "sankey", name= "sankey")
 
 h <- h %>%
-  dplyr::select(Virus.taxonomy, Phage.cycle, Phylum, Domain) #hcrt_sandsignika
+  dplyr::select(Virus.taxonomy, Phage.cycle, Phylum, Vegetation, Domain)
 
 sankey_plot<- hchart(data_to_sankey(h), "sankey", name= "sankey") %>%
 hc_add_theme(hc_theme_hcrt()) %>% 
@@ -252,7 +252,7 @@ webshot::webshot("sankey_plot.html", "sankey_plot.pdf")
 #Lets make the piechart for host infected and those not.
 pi <- data.frame(
   Category = c("HP", "NHP"),
-  Count = c(162, 329)
+  Count = c(161, 330)
 )
 pdf("piechart_hp_nhp.pdf", width = 5 , height = 5)
 
