@@ -1,0 +1,20 @@
+#Read in the new file. This will be your input data
+input_data <- read.table("coverm_taxa_for_maaslin2.tsv", row.names = 1, header = TRUE)
+input_metadata <- read.csv("metadata_maAslin2.csv", row.names=1 ,sep = ",", header = TRUE)
+library(Maaslin2)
+
+# Running on just one fixed effects without normalizing. 
+fit_data2 = Maaslin2(
+  input_data, input_metadata, output = 'maaslin_08_28_vegetation', 
+  fixed_effects = "Vegetation", normalization = 'NONE', standardize = FALSE,
+  reference = "Vegetation,Mangrove",
+ max_significance = 0.05,# or your baseline
+)
+
+# Running on just one fixed effects (depth) without normalizing. Ended up using this
+fit_data4 = Maaslin2(
+  input_data, input_metadata, output = 'maaslin_08_28_depth', 
+  fixed_effects = "Depth", normalization = 'NONE', standardize = FALSE,
+  reference = "Depth,Two",
+ max_significance = 0.05,# or your baseline
+)
