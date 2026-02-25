@@ -1,0 +1,33 @@
+---
+title: "MaAslin2"
+author: "Gina"
+date: "2025-08-28"
+output: html_document
+---
+
+
+```{r}
+getwd()
+## Lets run MaAslin2
+input_data <- read.table("/Users/gla589/Documents/Research/Manerr_Sup_Info/Manerr_Table_Info/df_phylum_transposed.csv", row.names = 1, sep = ",", header = TRUE)
+input_metadata <- read.csv("/Users/gla589/Documents/Research/Manerr_Sup_Info/Manerr_Table_Info/metadata_MaAslin2.csv", row.names=1 ,sep = ",", header = TRUE)
+library(Maaslin2)
+
+# Running on just one fixed effects (vegetation) without normalizing. 
+fit_data1 = Maaslin2(
+  input_data, input_metadata, output = 'maaslin2_feb_23_vegetation', 
+  fixed_effects = "Vegetation", normalization = 'NONE', standardize = FALSE,
+  reference = "Vegetation,Mangrove",
+ max_significance = 0.05,# or your baseline
+)
+
+# Running on just one fixed effects (depth) without normalizing.
+input_metadata2 <- read.csv("/Users/gla589/Documents/Research/Manerr_Sup_Info/Manerr_Table_Info/metadata_MaAslin2_depth.csv", row.names=1 ,sep = ",", header = TRUE)
+fit_data4 = Maaslin2(
+  input_data, input_metadata2, output = 'maaslin2_feb_23_depth', 
+  fixed_effects = "Depth_layer", normalization = 'NONE', standardize = FALSE,
+  reference = "Depth_layer,Top",
+ max_significance = 0.05,# or your baseline
+)
+```
+
