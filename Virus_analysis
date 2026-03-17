@@ -1,4 +1,4 @@
-####This page includes all analysis that performed on viruses in this paper "Shifting Vegetation Zones Restructure Sediment Microbiomes and Viromes in a Mangrove–Cordgrass Estuary" ####
+####This page includes all analysis that performed on viruses in this paper "Shifts in vegetation impact estuary microbiomes" ####
 
 ####Lets start by making the piechart to count the number of virus
 library(ggplot2)
@@ -30,103 +30,234 @@ ggplot(bin_summary, aes(x = "", y = Count, fill = Category)) +
 dev.off()
 
 
-####################
+############################################################################
 
 # 1. Lets start by analyzing the life cyle of the of unbinned viruses (uViGs)
 
 set.seed(06131993)
-c <- read.csv("checkv_lifestyle.csv", header = TRUE, sep = ",")
-head(c)
-pdf("UViGs_Lifecycle.pdf", width = 5 , height = 5)
-c1 <- ggplot(data = c)
-c1 <- c1 + geom_jitter(aes(x = life_cycle, y = contig_length, fill = life_cycle), shape = 21, show.legend = FALSE, color = "black",
-                       width = 0.35,
-                      size = 2) + theme_classic() +
-                        stat_summary(aes(x = life_cycle, y = contig_length), 
-                        fun = median, geom = "crossbar", color = "black", 
-                        width = 0.7) + 
-  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
-  labs(title = "Life Cycle of Unclultivated Viral Genomes", x = "Life Cycle", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
-  theme(
-    axis.text.x = element_text(size = 11),
-    axis.text.y = element_text(size = 11),
-    axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11))
-c1
+check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
 
-dev.off()
+# Convert to kb
+check_uvig$contig_length_kb <- check_uvig$contig_length / 1000
+
+# Create plot 
+q <- ggplot(check_uvig, aes(x = life_cycle, y = contig_length_kb, fill = life_cycle)) +
+  
+  # Jitter points
+  geom_jitter(
+    shape = 21,
+    color = "black",
+    width = 0.25,
+    size = 2.5,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  
+  # Median crossbar 
+  stat_summary(
+    fun = median,
+    geom = "crossbar",
+    color = "black",
+    width = 0.6
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
+  
+  # Labels
+  labs(
+    title = "Life Cycle of UViGs",
+    x = "Life Cycle",
+    y = "Viral Contig Length (kb)"
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 11),
+    plot.title = element_text(size = 11, hjust = 0.5, face = "bold")
+  )
+
+# Save plot
+ggsave(
+  filename = "UViGs_Lifecycle_03_17.pdf",
+  plot = q,
+  width = 5,
+  height = 5
+)
+
 
 ## 2. Next, lets analyze the life cycle of the vMAGs 
 set.seed(06131993)
-v <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
-head(v)
-pdf("VMAGs_Lifecycle.pdf", width = 5 , height = 5)
-v1 <- ggplot(data = v)
-v1 <- v1 + geom_jitter(aes(x = life_cycle, y = contig_length, fill = life_cycle), shape = 21, show.legend = FALSE, color = "black",
-                       width = 0.35,
-                      size = 2) + theme_classic() +
-                        stat_summary(aes(x = life_cycle, y = contig_length), 
-                        fun = median, geom = "crossbar", color = "black", 
-                        width = 0.7) + 
-  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
-  labs(title = "Life Cycle of VMAGs", x = "Life Cycle", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
-  theme(
-    axis.text.x = element_text(size = 11),
-    axis.text.y = element_text(size = 11),
-    axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11))
-v1
+# Read data
+check_vmag <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE)
 
-dev.off()
+# Convert to kb
+check_vmag$contig_length_kb <- check_vmag$contig_length / 1000
+
+# Create plot 
+p <- ggplot(check_vmag, aes(x = life_cycle, y = contig_length_kb, fill = life_cycle)) +
+  
+  # Jitter points
+  geom_jitter(
+    shape = 21,
+    color = "black",
+    width = 0.25,
+    size = 2.5,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  
+  # Median crossbar 
+  stat_summary(
+    fun = median,
+    geom = "crossbar",
+    color = "black",
+    width = 0.6
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
+  
+  # Labels
+  labs(
+    title = "Life Cycle of VMAGs",
+    x = "Life Cycle",
+    y = "Viral Contig Length (kb)"
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 11),
+    plot.title = element_text(size = 11, hjust = 0.5, face = "bold")
+  )
+
+# Save plot
+ggsave(
+  filename = "VMAGs_Lifecycle_03_17.pdf",
+  plot = p,
+  width = 5,
+  height = 5
+)
 
 
 ## 3. Lets analyze the contig length and quality of the data. 
 ## This check the quality of VMAGs
 set.seed(06131993)
-q <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
-head(q)
-pdf("VMAGs_Quality.pdf", width = 5 , height = 5)
-q1 <- ggplot(data = q)
-q1 <- q1 + geom_jitter(aes(x = checkv_quality, y = contig_length, fill = checkv_quality), shape = 21, show.legend = FALSE, color = "black",
-                       width = 0.35,
-                      size = 2) + theme_classic() +
-                        stat_summary(aes(x = checkv_quality, y =           contig_length), 
-                        fun = median, geom = "crossbar", color = "black", 
-                        width = 0.7) + 
+# Read data
+check_vmag <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
+
+# Convert to kb
+check_vmag$contig_length_kb <- check_vmag$contig_length / 1000
+
+# Create plot 
+r <- ggplot(check_vmag, aes(x = checkv_quality, y = contig_length_kb, fill = checkv_quality)) +
+  
+  # Jitter points
+  geom_jitter(
+    shape = 21,
+    color = "black",
+    width = 0.25,
+    size = 2.5,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  
+  # Median crossbar 
+  stat_summary(
+    fun = median,
+    geom = "crossbar",
+    color = "black",
+    width = 0.6
+  ) +
+  
+  # Colors
   scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
-  labs(title = "Quality of VMAGs", x = "Quality", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+  
+  # Labels
+  labs(
+    title = "Quality of vMAGs",
+    x = "CheckV Quality",
+    y = "Viral Contig Length (kb)"
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 11) +
   theme(
     axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
     axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11))
-q1
+    axis.title.y = element_text(size = 11)
+  )
 
-dev.off()
+# Save plot
+ggsave(
+  filename = "vMAGs_Quality_03_17.pdf",
+  plot = r,
+  width = 5,
+  height = 5
+)
+
 
 # 4. Lastly, we repeat this for the UVIGs
 set.seed(06131993)
-u <- read.csv("checkv_lifestyle.csv", header = TRUE, sep = ",")
-head(u)
-pdf("UViGs_Quality.pdf", width = 5 , height = 5)
-u1 <- ggplot(data = u)
-u1 <- u1 + geom_jitter(aes(x = checkv_quality, y = contig_length, fill = checkv_quality), shape = 21, show.legend = FALSE, color = "black",
-                       width = 0.35,
-                      size = 2) + theme_classic() +
-                        stat_summary(aes(x = checkv_quality, y =           contig_length), 
-                        fun = median, geom = "crossbar", color = "black", 
-                        width = 0.7) + 
-  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB")) +
-  labs(title = "Quality of UViGs", x = "Quality", y = "Viral Contig Length") + theme_minimal(base_size = 11) +
+check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
+
+# Convert to kb
+check_uvig$contig_length_kb <- check_uvig$contig_length / 1000
+
+# Create plot 
+s <- ggplot(check_uvig, aes(x = checkv_quality, y = contig_length_kb, fill = checkv_quality)) +
+  
+  # Jitter points
+  geom_jitter(
+    shape = 21,
+    color = "black",
+    width = 0.25,
+    size = 2.5,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  
+  # Median crossbar 
+  stat_summary(
+    fun = median,
+    geom = "crossbar",
+    color = "black",
+    width = 0.6
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
+  
+  # Labels
+  labs(
+    title = "Quality of UViGs",
+    x = "CheckV Quality",
+    y = "Viral Contig Length (kb)"
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 11) +
   theme(
     axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
     axis.text.y = element_text(size = 11),
     axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11))
-u1
+    axis.title.y = element_text(size = 11)
+  )
 
-dev.off()
+# Save plot
+ggsave(
+  filename = "UViGs_Quality_03_17.pdf",
+  plot = s,
+  width = 5,
+  height = 5
+)
 
+##################################################################################
 #### Analyzing the viral MAGs taxonomy
 library(dplyr)
 set.seed(06131993)
@@ -344,14 +475,14 @@ piech <- ggplot(host_counts, aes(x = "", y = Count, fill = Predicted.Host)) +
         axis.ticks = element_blank()) +
   scale_fill_manual(values = c(
     "NHP" = "#c3d4cb",     
-    "p__Acidobacteriota" = "brown",      
-    "p__Bacteroidota" = "#92f52f",
-    "p__Chloroflexota" = "#069494",
-    "p__Desulfobacterota" = "#9d87e8",
-    "p__Methanobacteriota_B" = "cyan",
-    "p__Myxococcota" = "#FF7518",
-    "p__Pseudomonadota" = "#6D8196",
-    "p__Thermoproteota" = "#f52fc7"
+    "Acidobacteriota" = "brown",      
+    "Bacteroidota" = "#92f52f",
+    "Chloroflexota" = "#069494",
+    "Desulfobacterota" = "#9d87e8",
+    "Methanobacteriota_B" = "cyan",
+    "Myxococcota" = "#FF7518",
+    "Pseudomonadota" = "#6D8196",
+    "Thermoproteota" = "#f52fc7"
   )) +
   theme_void() +
   labs(title = "Predicted Host of Viral AMGs", fill = "Predicted Host") 
