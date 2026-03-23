@@ -1,9 +1,9 @@
 dat <- read.csv("MAGs-vs-Samples-Vegetation.csv", header=TRUE, sep = ",")
 
-#make community matrix - extract columns with abundance information
+# community matrix and column extract with abundance information
 com = dat[,4:ncol(dat)]
 
-#turn abundance data frame into a matrix
+# turn abundance data frame into a matrix
 m_com = as.matrix(com)
 
 #Run nmds analysis using bray-curtis
@@ -13,22 +13,22 @@ nmds
 #plot the result
 plot(nmds)
 
-#extract NMDS scores (x and y coordinates) for sites
+# extract NMDS scores (x and y coordinates) for sites
 data.scores = as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
+# add columns to data frame 
 data.scores$Samples = dat$Samples
 data.scores$Vegetation = dat$Vegetation
 data.scores$Depth = dat$Depth
 
 head(data.scores)
 
-# create a new factor variable (DepthName) with explicit level labeling for clarity
+# create a new factor variable (DepthName)
 data.scores$DepthName <- factor(data.scores$Depth,
                                 levels = c(0, 2, 12, 20, 40, 48, 56, 58),
                                 labels = c("0", "02", "12", "20", "40", "48", "56", "58"))
 
-# This plot visualizes samples by NMDS dimensions (axes) with point colors for depth
+# NMDS dimensions (axes) for depth
 nmds_plot3 = ggplot(data.scores, aes(x = NMDS1, y = NMDS2, shape = DepthName, colour = DepthName)) + 
   geom_point(size = 5) +
   theme(
