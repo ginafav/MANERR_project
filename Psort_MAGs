@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggplot2)
 pdat <- read.csv("/Users/gla589/Documents/Research/R_analysis_07_04/psort2_a.csv", header = TRUE, sep = ",")
 head(pdat)
-# Summarize counts by Phylum and Localization
+# Summarize psort counts by phylum and localization
 plot_data <- pdat %>%
   group_by(Phylum, Localization) %>%
   summarise(Count = n()) %>%
