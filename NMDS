@@ -28,7 +28,7 @@ data.scores$DepthName <- factor(data.scores$Depth,
                                 levels = c(0, 2, 12, 20, 40, 48, 56, 58),
                                 labels = c("0", "02", "12", "20", "40", "48", "56", "58"))
 
-# NMDS dimensions (axes) for depth
+# NMDS dimensions for depth
 nmds_plot3 = ggplot(data.scores, aes(x = NMDS1, y = NMDS2, shape = DepthName, colour = DepthName)) + 
   geom_point(size = 5) +
   theme(
