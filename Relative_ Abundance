@@ -4,7 +4,7 @@ library("vegan")
 library(tidyverse)
 library(pheatmap)
 set.seed(06131993)
-####Relative abundance of all 491 MAGs 
+#### Relative abundance of all 491 MAGs 
 # Read the data
 rel <- read.csv("Manerr_Table_Info/MAG-vs-Reads.csv", header=TRUE, sep = ",")
 
@@ -27,7 +27,7 @@ rel_mat <- as.matrix(rel_mat)
 distance_rows <- vegdist(rel_mat, method = "bray")
 clust_rows <- hclust(distance_rows, method = "ward.D2")
 
-# Bray-Curtis distance and clustering for columns (Samples)
+# Bray-Curtis distance and clustering for Samples
 distance_cols <- vegdist(t(rel_mat), method = "bray")
 clust_cols <- hclust(distance_cols, method = "ward.D2")
 pdf("mag_rel_abund.pdf", width = 11 , height = 8)
