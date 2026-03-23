@@ -4,7 +4,7 @@
 library(ggplot2)
 library(gridExtra)
 
-# Create a data frame
+# Lets create a data frame
 bin_summary <- data.frame(
   Category = c("Refined Bins", "Redundant Bins", "Bins >10 Scaffolds"),
   Count = c(1451 - 326 - 28, 326, 28)
@@ -53,7 +53,7 @@ q <- ggplot(check_uvig, aes(x = life_cycle, y = contig_length_kb, fill = life_cy
     show.legend = FALSE
   ) +
   
-  # Median crossbar 
+  # Include a median crossbar 
   stat_summary(
     fun = median,
     geom = "crossbar",
@@ -109,7 +109,7 @@ p <- ggplot(check_vmag, aes(x = life_cycle, y = contig_length_kb, fill = life_cy
     show.legend = FALSE
   ) +
   
-  # Median crossbar 
+  # Include a median crossbar 
   stat_summary(
     fun = median,
     geom = "crossbar",
