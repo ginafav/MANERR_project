@@ -54,7 +54,7 @@ ggsave(filename = "VMAGs_Lifecycle_03_17.pdf", plot = p, width = 5, height = 5)
 
 ###############################################################
 
-## Life cycle of UViGs
+## 2. Life cycle of UViGs
 check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
 
 # Convert to kb
@@ -71,11 +71,6 @@ q <- ggplot(check_uvig, aes(x = life_cycle, y = contig_length_kb, fill = life_cy
 
 # Save plot
 ggsave(filename = "UViGs_Lifecycle_03_17.pdf", plot = q, width = 5, height = 5)
-
-
-
-## 2. Next, lets analyze the life cycle of the vMAGs 
-set.seed(06131993)
 
 
 ## 3. Lets analyze the contig length and quality of the data. 
