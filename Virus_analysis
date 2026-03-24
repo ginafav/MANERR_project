@@ -32,174 +32,70 @@ dev.off()
 
 ############################################################################
 
-# 1. Lets start by analyzing the life cyle of the of unbinned viruses (uViGs)
+# 1. Lets start by analyzing the life cyle of the of vMAGs
 
-set.seed(06131993)
-check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
-
-# Convert to kb
-check_uvig$contig_length_kb <- check_uvig$contig_length / 1000
-
-# Create plot 
-q <- ggplot(check_uvig, aes(x = life_cycle, y = contig_length_kb, fill = life_cycle)) +
-  
-  # Jitter points
-  geom_jitter(
-    shape = 21,
-    color = "black",
-    width = 0.25,
-    size = 2.5,
-    alpha = 0.8,
-    show.legend = FALSE
-  ) +
-  
-  # Include a median crossbar 
-  stat_summary(
-    fun = median,
-    geom = "crossbar",
-    color = "black",
-    width = 0.6
-  ) +
-  
-  # Colors
-  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
-  
-  # Labels
-  labs(
-    title = "Life Cycle of UViGs",
-    x = "Life Cycle",
-    y = "Viral Contig Length (kb)"
-  ) +
-  
-  # Theme
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 11),
-    plot.title = element_text(size = 11, hjust = 0.5, face = "bold")
-  )
-
-# Save plot
-ggsave(
-  filename = "UViGs_Lifecycle_03_17.pdf",
-  plot = q,
-  width = 5,
-  height = 5
-)
-
-
-## 2. Next, lets analyze the life cycle of the vMAGs 
-set.seed(06131993)
-# Read data
 check_vmag <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE)
 
 # Convert to kb
 check_vmag$contig_length_kb <- check_vmag$contig_length / 1000
 
-# Create plot 
+# Plot
 p <- ggplot(check_vmag, aes(x = life_cycle, y = contig_length_kb, fill = life_cycle)) +
-  
-  # Jitter points
-  geom_jitter(
-    shape = 21,
-    color = "black",
-    width = 0.25,
-    size = 2.5,
-    alpha = 0.8,
-    show.legend = FALSE
-  ) +
-  
-  # Include a median crossbar 
-  stat_summary(
-    fun = median,
-    geom = "crossbar",
-    color = "black",
-    width = 0.6
-  ) +
-  
-  # Colors
-  scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
-  
-  # Labels
-  labs(
-    title = "Life Cycle of VMAGs",
-    x = "Life Cycle",
-    y = "Viral Contig Length (kb)"
-  ) +
-  
-  # Theme
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 11),
-    plot.title = element_text(size = 11, hjust = 0.5, face = "bold")
+      geom_jitter(shape = 21, color = "black", width = 0.25, size = 2.5, alpha = 0.8, show.legend = FALSE) +
+      stat_summary(fun = median, geom = "crossbar", color = "black", width = 0.6) +
+      scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) +
+      labs(title = "Life Cycle of VMAGs", x = "Life Cycle", y = "Viral Contig Length (kb)") +
+      theme_minimal(base_size = 12) +
+      theme(axis.text = element_text(size = 11),axis.title = element_text(size = 11), plot.title = element_text(size = 11, hjust = 0.5, face = "bold"))
+
+# Save plot
+ggsave(filename = "VMAGs_Lifecycle_03_17.pdf", plot = p, width = 5, height = 5)
+
+
+###############################################################
+
+## Life cycle of UViGs
+check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
+
+# Convert to kb
+check_uvig$contig_length_kb <- check_uvig$contig_length / 1000
+
+# Create plot
+q <- ggplot(check_uvig, aes(x = life_cycle, y = contig_length_kb, fill = life_cycle)) +
+      geom_jitter(shape = 21, color = "black", width = 0.25, size = 2.5, alpha = 0.8, show.legend = FALSE) +              stat_summary(fun = median, geom = "crossbar", color = "black", width = 0.6) +
+      scale_fill_manual(values = c("#FA9BCf", "#B0B5ED")) + 
+      labs(title = "Life Cycle of UViGs", x = "Life Cycle", y = "Viral Contig Length (kb)") +
+      theme_minimal(base_size = 12) +
+      theme(axis.text = element_text(size = 11), axis.title = element_text(size = 11), plot.title = element_text(size = 11, hjust = 0.5, face = "bold")
   )
 
 # Save plot
-ggsave(
-  filename = "VMAGs_Lifecycle_03_17.pdf",
-  plot = p,
-  width = 5,
-  height = 5
-)
+ggsave(filename = "UViGs_Lifecycle_03_17.pdf", plot = q, width = 5, height = 5)
+
+
+
+## 2. Next, lets analyze the life cycle of the vMAGs 
+set.seed(06131993)
 
 
 ## 3. Lets analyze the contig length and quality of the data. 
 ## This check the quality of VMAGs
 set.seed(06131993)
-# Read data
 check_vmag <- read.csv("checkv_lifstyle_vmags.csv", header = TRUE, sep = ",")
 
 # Convert to kb
 check_vmag$contig_length_kb <- check_vmag$contig_length / 1000
 
-# Create plot 
+# Create plot (DO NOT overwrite dataframe)
 r <- ggplot(check_vmag, aes(x = checkv_quality, y = contig_length_kb, fill = checkv_quality)) +
-  
-  # Jitter points
-  geom_jitter(
-    shape = 21,
-    color = "black",
-    width = 0.25,
-    size = 2.5,
-    alpha = 0.8,
-    show.legend = FALSE
-  ) +
-  
-  # Median crossbar 
-  stat_summary(
-    fun = median,
-    geom = "crossbar",
-    color = "black",
-    width = 0.6
-  ) +
-  
-  # Colors
-  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
-  
-  # Labels
-  labs(
-    title = "Quality of vMAGs",
-    x = "CheckV Quality",
-    y = "Viral Contig Length (kb)"
-  ) +
-  
-  # Theme
-  theme_minimal(base_size = 11) +
-  theme(
-    axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
-    axis.text.y = element_text(size = 11),
-    axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11)
-  )
+      geom_jitter(shape = 21, color = "black", width = 0.25, size = 2.5, alpha = 0.8, show.legend = FALSE) +              stat_summary(fun = median, geom = "crossbar", color = "black", width = 0.6) +
+      scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
+      labs(title = "Quality of vMAGs", x = "CheckV Quality", y = "Viral Contig Length (kb)") +
+      theme_minimal(base_size = 11) +
+      theme(axis.text.x = element_text(size = 11, angle = 60, hjust = 1), axis.text.y = element_text(size = 11), axis.title.x = element_text(size = 11),axis.title.y = element_text(size = 11))
 
 # Save plot
-ggsave(
-  filename = "vMAGs_Quality_03_17.pdf",
-  plot = r,
-  width = 5,
-  height = 5
-)
+ggsave(filename = "vMAGs_Quality_03_17.pdf", plot = r, width = 5, height = 5)
 
 
 # 4. Lastly, we repeat this for the UVIGs
@@ -209,53 +105,16 @@ check_uvig <- read.csv("checkv_lifestyle.csv", header = TRUE)
 # Convert to kb
 check_uvig$contig_length_kb <- check_uvig$contig_length / 1000
 
-# Create plot 
+# Create plot (DO NOT overwrite dataframe)
 s <- ggplot(check_uvig, aes(x = checkv_quality, y = contig_length_kb, fill = checkv_quality)) +
-  
-  # Jitter points
-  geom_jitter(
-    shape = 21,
-    color = "black",
-    width = 0.25,
-    size = 2.5,
-    alpha = 0.8,
-    show.legend = FALSE
-  ) +
-  
-  # Median crossbar 
-  stat_summary(
-    fun = median,
-    geom = "crossbar",
-    color = "black",
-    width = 0.6
-  ) +
-  
-  # Colors
-  scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
-  
-  # Labels
-  labs(
-    title = "Quality of UViGs",
-    x = "CheckV Quality",
-    y = "Viral Contig Length (kb)"
-  ) +
-  
-  # Theme
-  theme_minimal(base_size = 11) +
-  theme(
-    axis.text.x = element_text(size = 11, angle = 60, hjust = 1),
-    axis.text.y = element_text(size = 11),
-    axis.title.x = element_text(size = 11),
-    axis.title.y = element_text(size = 11)
-  )
+      geom_jitter(shape = 21, color = "black", width = 0.25, size = 2.5, alpha = 0.8, show.legend = FALSE) +
+      stat_summary(fun = median, geom = "crossbar", color = "black", width = 0.6) +
+      scale_fill_manual(values = c("#FA9BCf", "#B5C1B2", "#66C2A5", "#FBc5BB", "#B0B5ED")) +
+      labs(title = "Quality of UViGs", x = "CheckV Quality", y = "Viral Contig Length (kb)") +
+      theme_minimal(base_size = 11) + theme(axis.text.x = element_text(size = 11, angle = 60, hjust = 1), axis.text.y = element_text(size = 11), axis.title.x = element_text(size = 11), axis.title.y = element_text(size = 11))
 
 # Save plot
-ggsave(
-  filename = "UViGs_Quality_03_17.pdf",
-  plot = s,
-  width = 5,
-  height = 5
-)
+ggsave(filename = "UViGs_Quality_03_17.pdf", plot = s, width = 5,height = 5)
 
 ##################################################################################
 #### Analyzing the viral MAGs taxonomy
@@ -425,12 +284,9 @@ category_counts <- amg %>%
 
 avg <- ggplot(category_counts, aes(x = Count, y = reorder(KEGG_ID_categories, Count))) +
   geom_bar(stat = 'identity', fill = '#66C2A5') +
-  labs(
-    title = 'Number of AVG per KEGG Category',
-    x = 'AVG Count',
-    y = 'KEGG Metabolic Category'
-  ) +
+  labs(title = 'Number of AVG per KEGG Category', x = 'AVG Count', y = 'KEGG Metabolic Category') +
   theme_minimal()
+
 ggsave("avg_barplot.pdf", plot = avg, width = 8, height = 6)
 
 #Percentage values of avg barplot
